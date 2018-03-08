@@ -23,14 +23,16 @@ STACK* push(STACK* head,int data)
 }
 STACK* pop(STACK *head)
 {
-    STACK* tmp = head;
-    if (head->next != NULL) {
-        head = head->next;
+    STACK* tmp;
+    tmp = head;
+    if (tmp == NULL) {
+        printf("\n Error : Trying to pop from empty stack");
+        return NULL;
     } else {
-        head = NULL;
+        tmp = tmp->next;
     }
-    
-    free(tmp);
+    free(head);
+    head = tmp;
     return head;
 }
 
@@ -42,21 +44,32 @@ void check_balanced(STACK *head, char *str) {
         return;
     }
     for (i=0; i < len; i++) {
+        
         if (str[i] == '{' || str[i] == '(' || str[i] == '[') {
-            head = push(head, str[i]);
-            
+                head = push(head, str[i]);
+                
         } 
-        if (str[i] == '}' && head->data == '{') {
-           head = pop(head); 
-        }
         
-        if (str[i] == ')' && head->data == '(') {
-           head = pop(head); 
-        }
+        if (head != NULL) {
+            if (str[i] == '}' && head->data == '{') {
+                head = pop(head);
+
+            }
         
-        if(str[i] == ']' && head->data == '[') {
-           head = pop(head); 
+            if (str[i] == ')' && head->data == '(') {
+                head = pop(head);
+                
+            }
+        
+            if(str[i] == ']' && head->data == '[') {
+                head = pop(head); 
+                
+            }
+        } else  {
+            printf("not balanced\n");
+            return;
         }
+            
     }    
     
     if (head == NULL) { 
@@ -71,14 +84,17 @@ void check_balanced(STACK *head, char *str) {
 int main() {
     STACK *head = NULL;
     int i, num;
-    char *str;
+    char str[10];
+    
     scanf("%d", &num);
     for(i=0; i<num; i++) {
-        str = malloc(sizeof(char) * (20 + 1));
+        //str = malloc(sizeof(char) * (10));
         scanf("%s", str);
         check_balanced(head, str);
-        free(str);
-        str = NULL;
+        //free(str);
+        //str = NULL;
     }
+    
+    return 0;
 }
 
