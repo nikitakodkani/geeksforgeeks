@@ -7,65 +7,64 @@ typedef struct STACK {
     struct STACK *next;
 } STACK;
 
-STACK* push(STACK* head,int data)
+STACK* push(STACK* head,char data)
 {
     STACK* tmp = (STACK*)malloc(sizeof(STACK));
-    if(tmp == NULL)
-    {
-        printf("Malloc error \n");
-        exit(0);
-    }
     tmp->data = data;
-    tmp->next = head;
+    if(head == NULL)
+        tmp->next = NULL;
+    else
+        tmp->next = head;
     head = tmp;
-    
+   
     return head;
 }
 STACK* pop(STACK *head)
 {
-    STACK* tmp;
-    tmp = head;
-    if (tmp == NULL) {
-        printf("\n Error : Trying to pop from empty stack");
-        return NULL;
-    } else {
-        tmp = tmp->next;
-    }
-    free(head);
-    head = tmp;
+   if(head == NULL)
+      return NULL;
+    else{
+      STACK* tmp = head;
+      head = tmp->next;
+      free(tmp);
+   }
+    
     return head;
 }
 
 void check_balanced(STACK *head, char *str) {
-    int i=0;
+    int i=0, check = 0;
     int len = strlen(str);
     if (len % 2 != 0) {
         printf("not balanced\n");
         return;
     }
     for (i=0; i < len; i++) {
-        
+        check = 0;
         if (str[i] == '{' || str[i] == '(' || str[i] == '[') {
                 head = push(head, str[i]);
+                check =1;
                 
         } 
         
         if (head != NULL) {
             if (str[i] == '}' && head->data == '{') {
                 head = pop(head);
-
+                check = 1;
             }
         
             if (str[i] == ')' && head->data == '(') {
                 head = pop(head);
-                
+                check = 1;
             }
         
             if(str[i] == ']' && head->data == '[') {
                 head = pop(head); 
-                
+                check = 1;
             }
-        } else  {
+        } 
+        
+        if (check == 0) {
             printf("not balanced\n");
             return;
         }
@@ -84,17 +83,17 @@ void check_balanced(STACK *head, char *str) {
 int main() {
     STACK *head = NULL;
     int i, num;
-    char str[10];
+    //char str[10];
+    char *str;
     
     scanf("%d", &num);
     for(i=0; i<num; i++) {
-        //str = malloc(sizeof(char) * (10));
+        str = malloc(sizeof(char) * (100));
         scanf("%s", str);
         check_balanced(head, str);
-        //free(str);
-        //str = NULL;
+        free(str);
+        str = NULL;
     }
     
     return 0;
 }
-
