@@ -33,58 +33,48 @@ STACK* pop(STACK *head)
     return head;
 }
 
+int prec(char op) {
+    switch (op)
+    {
+    case '+':
+    case '-':
+        return 1;
+ 
+    case '*':
+    case '/':
+        return 2;
+ 
+    case '^':
+        return 3;
+    }
+    return -1;
+}
+
 void infix_postfix(STACK *head, char *str) {
     int i=0, oc=0;
     char output[30];
-    int prec = 0;
+    
     
     for (i=0; str[i] != '\0' ; i++) {
-        
-                switch(str[i]) {
-                case '(': 
-                    head = push(head, str[i]);
-                    break;
-                case ')':
-                        while (head->data != '(') {
-                            output[oc++] = head->data;
-                            head = pop(head);
-                            
-                        }
-                    
-                    head = pop(head);
-                    break;
-                case '+':
-                case '-':
-                    if (head != NULL) {
-                        if (head->data == '*' || head->data == '/') {
-                            while (head != NULL) {
-                                output[oc++] = head->data;
-                                head = pop(head);
-                            }
-                        } else if(head->data == '+' || head->data == '-') {
-                            output[oc++] = head->data;
-                            head = pop(head);
-                        } else { 
-                            head = push(head, str[i]);
-                        }
-                    } else {
-                        head = push(head, str[i]);
-                    }
-                    break;
-                case '*':
-                case '/':
-                if (head != NULL) {
-                    if (head->data == '*' || head->data == '/') {
-                        output[oc++] = head->data;
-                        head = pop(head);
-                    }
-                }
-                    head = push(head, str[i]);
-                    //printf("%c",head->data);
-                    break;
-                default:
-                    output[oc++] = str[i];
+        if( (str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z') ){
+             output[oc++] = str[i];
+        } else if(str[i] == '('){
+            head = push(head, str[i]);
+        } else if(str[i] == ')') {
+           while (head->data != '(') {
+                output[oc++] = head->data;
+                head = pop(head);
             }
+            // Remove the paranthesis
+            head = pop(head); 
+        } else {
+            while (head != NULL && prec(str[i]) <= prec(head->data)) {
+                    output[oc++] = head->data;
+                    head = pop(head);
+            }
+                head = push(head, str[i]);
+             
+        }
     }
     while (head != NULL) {
         output[oc++] = head->data;
