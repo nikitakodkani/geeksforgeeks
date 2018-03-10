@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct STACK {
+    int data;
+    struct STACK *next;
+} STACK;
+
+STACK* push(STACK* head,char data)
+{
+    STACK* tmp = (STACK*)malloc(sizeof(STACK));
+    tmp->data = data;
+    if(head == NULL)
+        tmp->next = NULL;
+    else
+        tmp->next = head;
+    head = tmp;
+   
+    return head;
+}
+STACK* pop(STACK *head)
+{
+   if(head == NULL)
+      return NULL;
+    else{
+      STACK* tmp = head;
+      head = tmp->next;
+      free(tmp);
+   }
+    
+    return head;
+}
+
+void postfix_eval(STACK *head, char *str) {
+    int digit = 0, num1 = 0, num2 =0, i=0;
+    for (i=0; str[i] != '\0' ; i++) {
+        digit = 0;
+        if(isdigit(str[i])) {
+            digit = str[i] - '0';
+            head = push(head, digit);
+        } else {
+            num2 = head->data;
+            head = pop(head);
+            num1 = head->data;
+            head = pop(head);
+            
+            switch (str[i]) {
+                case '+': digit = num2 + num1;
+                          break;
+                case '-': digit = num1 - num2;
+                          break;
+                case '*': digit = num2 * num1;
+                          break;
+                case '/': digit = num1 / num2;
+                          break;
+                case '^': digit = num1 ^ num2;
+                          break;
+                
+            }
+            head = push(head, digit);
+        } 
+    }
+    printf("%d\n",head->data);
+    head = pop(head);
+}
+
+int main() {
+    STACK *head = NULL;
+    int i, num;
+    char *str;
+    
+    scanf("%d", &num);
+    for(i=0; i<num; i++) {
+        str = malloc(sizeof(char) * (30));
+        scanf("%s", str);
+        postfix_eval(head, str);
+        free(str);
+        str = NULL;
+    }
+    
+    return 0;
+}
