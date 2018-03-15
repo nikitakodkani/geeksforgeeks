@@ -11,3 +11,5 @@ Stacks
     not balanced
 
 Queues
+
+# Reference: http://courses.cs.vt.edu/cs5114/spring2004/notes.pdf
